@@ -2,60 +2,85 @@
 
 namespace Geekbrains\Application1\Models;
 
-class User {
-
-    private ?string $userName;
+class User
+{
+    private string $userName;
     private ?int $userBirthday;
 
     private static string $storageAddress = '/storage/birthdays.txt';
 
-    public function __construct(string $name = null, int $birthday = null){
-        $this->userName = $name;
-        $this->userBirthday = $birthday;
-    }
-
-    public function setName(string $userName) : void {
+    public function setUserName(string $userName): void
+    {
         $this->userName = $userName;
     }
 
-    public function getUserName(): string {
+    public function getUserName(): string
+    {
         return $this->userName;
     }
 
-    public function getUserBirthday(): int {
+    public function getUserBirthday(): int
+    {
         return $this->userBirthday;
     }
 
-    public function setBirthdayFromString(string $birthdayString) : void {
+    public function __construct(string $userName, int $userBirthday = null)
+    {
+        $this->userName = $userName;
+        $this->userBirthday = $userBirthday;
+    }
+
+    public function setBirthdayFromString(string $birthdayString): void
+    {
         $this->userBirthday = strtotime($birthdayString);
     }
 
-    public static function getAllUsersFromStorage(): array|false {
-        $address = $_SERVER['DOCUMENT_ROOT'] . User::$storageAddress;
-        
-        if (file_exists($address) && is_readable($address)) {
-            $file = fopen($address, "r");
-            
+    public static function getAllUsersFromStorage(): array|false
+    {
+        $adress = $_SERVER['DOCUMENT_ROOT'] . User::$storageAddress;
+
+        if (file_exists($adress) && is_readable($adress)) {
+            $file = fopen($adress, "r");
+
             $users = [];
-        
+
             while (!feof($file)) {
-                $userString = fgets($file);
-                $userArray = explode(",", $userString);
+                $userStrig = fgets($file);
+                $userArray = explode(",", $userStrig);
 
                 $user = new User(
                     $userArray[0]
                 );
                 $user->setBirthdayFromString($userArray[1]);
-
                 $users[] = $user;
             }
-            
+
             fclose($file);
 
             return $users;
-        }
-        else {
+        } else {
             return false;
         }
     }
+
+    public static function save(User $user): bool
+    {
+
+        $adress = $_SERVER['DOCUMENT_ROOT'] . User::$storageAddress;
+        $myFormatBirthday = date("d-m-Y", $user->getUserBirthday());
+
+        if (file_exists($adress) && is_writable($adress)) {
+            $file = fopen($adress, "a");
+
+            fwrite($file, "\n" . $user->getUserName() . "," . $myFormatBirthday);
+
+            fclose($file);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 }

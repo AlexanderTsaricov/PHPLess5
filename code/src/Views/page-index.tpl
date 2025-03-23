@@ -1,1 +1,5 @@
-<p>Наше первое приложение!</p>
+
+<p class="hello">Наше первое приложение!</p>
+
+
+<link rel="stylesheet" type="text/css" href={{CSSHref}}>

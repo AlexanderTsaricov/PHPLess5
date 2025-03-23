@@ -1,0 +1,22 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+.ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.ul_li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 8px;
+}
+.ul_li::before {
+  content: "*";
+  position: absolute;
+  left: 0;
+  color: #007bff;
+  font-size: 1.2em;
+}/*# sourceMappingURL=user-index.css.map */
