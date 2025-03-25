@@ -3,7 +3,7 @@
     <head>
         <title>{{ title }}</title>
     </head>
-    <link rel="stylesheet" type="text/css" href={{ CSSHref ~ "/main/main.css" }}>
+    <link rel="stylesheet" type="text/css" href={{ CSSHref ~ "/main/style.css" }}>
     <body>
         {% include "header.tpl" %}
         <main class="main">
@@ -14,6 +14,6 @@
             </div>
         </main>
         {% include "footer.tpl" %}
-        <script src="/src/Views/JS/timescript.js"></script>
+        <script src="/src/Domain/Views/JS/timescript.js"></script>
     </body>
 </html>

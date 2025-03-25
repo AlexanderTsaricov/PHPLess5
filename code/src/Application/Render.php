@@ -2,6 +2,7 @@
 
 namespace Geekbrains\Application1\Application;
 
+use Exception;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -24,6 +25,17 @@ class Render
         $CSSFolder = $this->viewFolder . '/CSS';
         $template = $this->environment->load('main.tpl');
         $templateVariables['content_template_name'] = $contentTemplateName;
+        $templateVariables['CSSHref'] = $CSSFolder;
+        return $template->render($templateVariables);
+    }
+
+
+    public function renderExeptionPage(Exception $e, string $exeptionPage = 'exeptionPage.tpl')
+    {
+        $CSSFolder = $this->viewFolder . '/CSS';
+        $template = $this->environment->load('main.tpl');
+        $templateVariables['content_template_name'] = $exeptionPage;
+        $templateVariables['message'] = $e->getMessage();
         $templateVariables['CSSHref'] = $CSSFolder;
         return $template->render($templateVariables);
     }

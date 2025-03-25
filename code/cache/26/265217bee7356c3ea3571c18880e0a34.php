@@ -46,6 +46,7 @@ class __TwigTemplate_fcbb0cb4839285d9479ecfe8d08df713 extends Template
 <link rel=\"stylesheet\" type=\"text/css\" href=";
         // line 5
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((($context["CSSHref"] ?? null) . "/footer/footer.css"), "html", null, true);
+        yield ">";
         yield from [];
     }
 

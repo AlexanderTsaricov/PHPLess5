@@ -84,4 +84,42 @@ class UserController
             throw new \Exception("Переданные данные некорректны");
         }
     }
+
+    public function actionUpdate()
+    {
+        $user = new User();
+        $render = new Render();
+        if (User::validateUpdateData()) {
+
+            $user->updateUser();
+            return $render->renderPage(
+                "user-created.tpl",
+                [
+                    "title" => "Пользователь обновлен",
+                    "message" => "Обновлен пользователь с ID " . $user->getUserId()
+                ]
+            );
+        } else {
+            throw new \Exception("Переданные данные некорректны или не найден пользователь с такми ID");
+        }
+    }
+
+    public function actionDelete(): string
+    {
+
+        $user = new User();
+        $render = new Render();
+        if (User::validateDeleteData()) {
+            $user->deleteUser();
+            return $render->renderPage(
+                "user-created.tpl",
+                [
+                    "title" => "Пользователь удален",
+                    "message" => "Удален пользователь с ID " . $user->getUserId()
+                ]
+            );
+        } else {
+            throw new \Exception("Переданные данные некорректны или не найден пользователь с такми ID");
+        }
+    }
 }

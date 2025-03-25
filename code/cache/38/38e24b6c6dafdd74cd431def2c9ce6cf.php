@@ -49,7 +49,7 @@ class __TwigTemplate_2020567db358feb3078ae6ad4bf1e7a9 extends Template
     </head>
     <link rel=\"stylesheet\" type=\"text/css\" href=";
         // line 6
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((($context["CSSHref"] ?? null) . "/main/main.css"), "html", null, true);
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((($context["CSSHref"] ?? null) . "/main/style.css"), "html", null, true);
         yield ">
     <body>
         ";
@@ -75,7 +75,7 @@ class __TwigTemplate_2020567db358feb3078ae6ad4bf1e7a9 extends Template
         // line 16
         yield from $this->loadTemplate("footer.tpl", "main.tpl", 16)->unwrap()->yield($context);
         // line 17
-        yield "        <script src=\"/src/Views/JS/timescript.js\"></script>
+        yield "        <script src=\"/src/Domain/Views/JS/timescript.js\"></script>
     </body>
 </html>";
         yield from [];
