@@ -4,7 +4,11 @@
 
 
 require_once('./vendor/autoload.php');
-use Geekbrains\Application1\Application;
+use Geekbrains\Application1\Application\Application;
 
-$app = new Application();
-echo $app->run();
+try {
+    $app = new Application();
+    echo $app->run();
+} catch (Exception $e) {
+    echo "При старте приложения произошла ошибка: " . $e->getMessage();
+}

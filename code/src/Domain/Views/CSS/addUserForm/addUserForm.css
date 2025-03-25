@@ -1,0 +1,12 @@
+.addUserForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.addUserForm_input {
+  margin-bottom: 5px;
+  padding: 5px;
+}
+.addUserForm_submit {
+  padding: 7px 10px;
+}/*# sourceMappingURL=addUserForm.css.map */
