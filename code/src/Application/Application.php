@@ -6,6 +6,10 @@ use Geekbrains\Application1\Domain\Controllers\ErrorController;
 use Geekbrains\Application1\Infrastructure\Config;
 use Geekbrains\Application1\Infrastructure\Storage;
 use Geekbrains\Application1\Application\Auth;
+use Monolog\Handler\FirePHPHandler;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
 
 class Application
 {
@@ -19,11 +23,20 @@ class Application
 
     public static Auth $auth;
 
+    public static Logger $logger;
+
     public function __construct()
     {
         Application::$config = new Config();
         Application::$storage = new Storage();
         Application::$auth = new Auth();
+        Application::$logger = new Logger('application_logger');
+        Application::$logger->pushHandler(new StreamHandler(
+            $_SERVER['DOCUMENT_ROOT'] . "/log/" . Application::$config->get()['log']['LOGS_FILE'] . "-" . date('Y-m-d') . ".log", Level::Debug
+        ));
+
+        Application::$logger->pushHandler(new FirePHPHandler());
+
     }
 
     public function run()
@@ -68,6 +81,9 @@ class Application
                 }
 
             } else {
+                $logMessage = "Метод " . $this->methodName . " не сущестувует в контроллере " . $this->controllerName . " | ";
+                $logMessage .= "Попытка вызова адреса " . $_SERVER['REQUEST_URI'];
+                Application::$logger->error($logMessage);
                 header("HTTP/1/.1 404 Not Found");
                 header("Status: 404 Not Found");
                 return call_user_func_array([new ErrorController(), "actionIndex"], []);
