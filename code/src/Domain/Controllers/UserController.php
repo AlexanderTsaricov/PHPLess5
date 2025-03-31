@@ -205,6 +205,7 @@ class UserController extends AbstractController
     public function actionLogout(): string
     {
         session_destroy();
+        setcookie('mysite', '', time() - 3600, '/');
         header('Location: /');
         return '';
     }
