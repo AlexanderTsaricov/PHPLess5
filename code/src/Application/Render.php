@@ -26,6 +26,18 @@ class Render
         $template = $this->environment->load('main.tpl');
         $templateVariables['content_template_name'] = $contentTemplateName;
         $templateVariables['CSSHref'] = $CSSFolder;
+        if (isset($_SESSION['user_name'])) {
+            $username = null;
+
+            if (isset($_SESSION["user_name"])) {
+                $username = $_SESSION["user_name"];
+            } else {
+                $username = 'Пользователь';
+            }
+            $templateVariables['user_authorized'] = true;
+            $templateVariables['user_name'] = $username;
+
+        }
         return $template->render($templateVariables);
     }
 
@@ -46,5 +58,20 @@ class Render
         $template = $this->environment->load('errorPage.tpl');
         $templateVariables['CSSHref'] = $CSSFolder;
         return $template->render($templateVariables);
+    }
+
+    /**
+     * Generation template with form
+     * @param string $contentTemplateName - template name (tpl)
+     * @param array $templateVariables
+     * @return string render
+     */
+    public function renderPageWithForm(string $contentTemplateName = 'page-index.tpl', array $templateVariables = [])
+    {
+        // Генерируется рандомный набор байт, который потом преобразуется в строку с помощью bin2hex
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+        $templateVariables['csrf_token'] = $_SESSION['csrf_token'];
+        return $this->renderPage($contentTemplateName, $templateVariables);
     }
 }

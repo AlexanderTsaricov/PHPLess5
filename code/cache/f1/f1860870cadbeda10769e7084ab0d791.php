@@ -44,12 +44,13 @@ class __TwigTemplate_470e1b460dd327f3a994b39e4f82966e extends Template
         <p>Это шапка сайта</p>
         <a href=\"/\">Главная</a>
         <a href=\"/user/index/\">Пользователи</a>
+        <a href=\"/user/edit/\">Создать пользователя</a>        
     </div>
     <div class=\"header_box\"><p>Это тоже  шапка сайта</p></div>
 </header>
 
 <link rel=\"stylesheet\" type=\"text/css\" href=";
-        // line 10
+        // line 11
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((($context["CSSHref"] ?? null) . "/header/header.css"), "html", null, true);
         yield ">";
         yield from [];
@@ -76,7 +77,7 @@ class __TwigTemplate_470e1b460dd327f3a994b39e4f82966e extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  53 => 10,  42 => 1,);
+        return array (  54 => 11,  42 => 1,);
     }
 
     public function getSourceContext(): Source

@@ -1,9 +1,11 @@
 <?php
 namespace Geekbrains\Application1\Application;
 
+use Geekbrains\Application1\Domain\Controllers\AbstractController;
 use Geekbrains\Application1\Domain\Controllers\ErrorController;
 use Geekbrains\Application1\Infrastructure\Config;
 use Geekbrains\Application1\Infrastructure\Storage;
+use Geekbrains\Application1\Application\Auth;
 
 class Application
 {
@@ -15,14 +17,20 @@ class Application
 
     public static Storage $storage;
 
+    public static Auth $auth;
+
     public function __construct()
     {
         Application::$config = new Config();
         Application::$storage = new Storage();
+        Application::$auth = new Auth();
     }
 
     public function run()
     {
+        // Для начала сессии вызывам эту функцию
+        session_start();
+
         // Разбиваем адрес по символу слеша
         $routeArray = explode('/', $_SERVER['REQUEST_URI']);
         if (isset($routeArray[1]) && $routeArray[1] != '') {
@@ -45,7 +53,20 @@ class Application
 
             if (method_exists($this->controllerName, $this->methodName)) {
                 $controlllerInstance = new $this->controllerName();
-                return call_user_func_array([$controlllerInstance, $this->methodName], []);
+
+                if ($controlllerInstance instanceof AbstractController) {
+                    if (!$this->checkAccesToMethod($controlllerInstance, $this->methodName)) {
+                        return call_user_func_array(
+                            [$controlllerInstance, $this->methodName],
+                            []
+                        );
+                    } else {
+                        return 'Нет доступа к методу';
+                    }
+                } else {
+                    return call_user_func_array([$controlllerInstance, $this->methodName], []);
+                }
+
             } else {
                 header("HTTP/1/.1 404 Not Found");
                 header("Status: 404 Not Found");
@@ -61,5 +82,25 @@ class Application
         // Проверяем метод на существование
 
         // Вызываем метод, если он существует
+    }
+
+    private function checkAccesToMethod(AbstractController $controlllerInstance, string $methodName): bool
+    {
+        $userRoles = $controlllerInstance->getUserRoles();
+
+
+        $rules = $controlllerInstance->getActionPermissions($methodName);
+        $isAllowed = false;
+
+        if (!empty($rules)) {
+            foreach ($rules as $rolePermission) {
+                if (!in_array($rolePermission, $userRoles)) {
+                    $isAllowed = true;
+                    break;
+                }
+            }
+        }
+
+        return $isAllowed;
     }
 }

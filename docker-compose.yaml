@@ -62,7 +62,6 @@ services:
     # мы можем создать для контейнеров внутреннюю сеть
     networks:
       - app-network
-
 #Docker Networks
 networks:
   app-network:

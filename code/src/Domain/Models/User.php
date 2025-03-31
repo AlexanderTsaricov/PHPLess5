@@ -3,7 +3,7 @@
 namespace Geekbrains\Application1\Domain\Models;
 use Geekbrains\Application1\Application\Application;
 use Geekbrains\Application1\Infrastructure\Storage;
-use LDAP\Result;
+use DateTime;
 
 class User
 {
@@ -13,6 +13,10 @@ class User
     private ?int $userBirthday;
 
     private ?int $userId;
+
+    private ?string $login;
+
+    private ?string $logtoken;
 
     private static string $storageAddress = '/storage/birthdays.txt';
 
@@ -50,12 +54,28 @@ class User
         return $this->userBirthday;
     }
 
-    public function __construct(string $name = null, string $lastname = null, int $birthday = null, int $userId = null)
+    public function getLogin()  :?string {
+        return $this->login;
+    }
+
+    public function getLogtoken(): ?string {
+        return $this->logtoken;
+    }
+
+    public function __construct(
+        string $name = null, 
+        string $lastname = null, 
+        int $birthday = null, 
+        int $userId = null, 
+        string $login=null,
+        string $logtoken = null)
     {
         $this->userName = $name;
         $this->userLastname = $lastname;
         $this->userBirthday = $birthday;
         $this->userId = $userId;
+        $this->login = $login;
+        $this->logtoken = $logtoken;
     }
 
     public function setBirthdayFromString(string $birthdayString): void
@@ -74,79 +94,50 @@ class User
         $users = [];
 
         foreach ($result as $item) {
-            $user = new User($item['user_name'], $item['user_lastname'], $item['user_birthday_timestamp'], $item['id_user']);
+            $user = new User($item['user_name'], $item['user_lastname'], $item['user_birthday_timestamp'], $item['id_user'], $item['login']);
             $users[] = $user;
         }
 
         return $users;
-        /*
-        $adress = $_SERVER['DOCUMENT_ROOT'] . User::$storageAddress;
-
-        if (file_exists($adress) && is_readable($adress)) {
-            $file = fopen($adress, "r");
-
-            $users = [];
-
-            while (!feof($file)) {
-                $userStrig = fgets($file);
-                $userArray = explode(",", $userStrig);
-
-                $user = new User(
-                    $userArray[0]
-                );
-                $user->setBirthdayFromString($userArray[1]);
-                $users[] = $user;
-            }
-
-            fclose($file);
-
-            return $users;
-        } else {
-            return false;
-        }
-            */
     }
-
-    /*
-    public static function save(User $user): bool
-    {
-
-        $adress = $_SERVER['DOCUMENT_ROOT'] . User::$storageAddress;
-        $myFormatBirthday = date("d-m-Y", $user->getUserBirthday());
-
-        if (file_exists($adress) && is_writable($adress)) {
-            $file = fopen($adress, "a");
-
-            fwrite($file, "\n" . $user->getUserName() . "," . $myFormatBirthday);
-
-            fclose($file);
-
-            return true;
-        } else {
-            return false;
-        }
-    }
-        */
 
     public static function validateRequestData(): bool
     {
+        $result = true;
         if (
-            isset($_GET['name']) && !empty($_GET['name']) &&
-            isset($_GET['lastname']) && !empty($_GET['lastname']) &&
-            isset($_GET['birthday']) && !empty($_GET['birthday'])
+            !(
+                isset($_POST['name']) && !empty($_POST['name']) &&
+                isset($_POST['lastname']) && !empty($_POST['lastname']) &&
+                isset($_POST['birthday']) && !empty($_POST['birthday'])
+            )
         ) {
-            return true;
-        } else {
-            return false;
+            $result = false;
         }
+
+        if (!preg_match('/^(\d{2}-\d{2}-\d{4})$/', $_POST['birthday'])) {
+            $result = false;
+        }
+
+        if (!preg_match('/^[A-Za-zА-Яа-яЁё]+$/u', $_POST['name'])) {
+            $result = false;
+        }
+        if (!preg_match('/^[A-Za-zА-Яа-яЁё]+$/u', $_POST['lastname'])) {
+            $result = false;
+        }
+
+        if (!isset($_SESSION['csrf_token']) || $_SESSION['csrf_token'] != $_POST['csrf_token']) {
+            $result = false;
+        }
+
+        return $result;
 
     }
 
     public function setParamsFromRequestData(): void
     {
-        $this->userName = $_GET['name'];
-        $this->userLastname = $_GET['lastname'];
-        $this->setBirthdayFromString($_GET['birthday']);
+        $this->userName = htmlspecialchars($_POST['name']);
+        $this->userLastname = htmlspecialchars($_POST['lastname']);
+        $this->setBirthdayFromString($_POST['birthday']);
     }
 
     public function saveToStorage(): void
@@ -163,33 +154,32 @@ class User
 
     public static function validateUpdateData(): bool
     {
-        $result = false;
-        if (isset($_GET['id']) && !empty($_GET['id']) && substr_count($_SERVER['QUERY_STRING'], '&') > 0) {
-            $params = explode('&', $_SERVER['QUERY_STRING']);
-            foreach ($params as $param) {
-                $separateParam = explode('=', $param);
-                if (count($separateParam) == 2) {
-                    switch ($separateParam[0]) {
-                        case 'id':
-                        case 'name':
-                        case 'lastname':
-                        case 'birthday':
-                            break;
-                        default:
-                            return false;
+        if (isset($_POST['id_user']) && !empty($_POST['id_user'])) {
+
+            $users = User::getAllUsersFromStorage();
+            foreach ($users as $user) {
+                if ($user->getUserId() == (int) $_POST['id_user']) {
+                    $result = true;
+                    if (!preg_match('/^(\d{2}-\d{2}-\d{4})$/', $_POST['birthday'])) {
+                        $result = false;
                     }
+
+                    if (!preg_match('/^[A-Za-zА-Яа-яЁё]+$/u', $_POST['name'])) {
+                        $result = false;
+                    }
+                    if (!preg_match('/^[A-Za-zА-Яа-яЁё]+$/u', $_POST['lastname'])) {
+                        $result = false;
+                    }
+
+                    return $result;
                 } else {
                     return false;
                 }
             }
-            $users = User::getAllUsersFromStorage();
-            foreach ($users as $user) {
-                if ($user->getUserId() == (int) $_GET['id']) {
-                    return true;
-                }
-            }
+        } else {
+            return false;
         }
-        return $result;
+
     }
 
     public static function validateDeleteData(): bool
@@ -213,25 +203,27 @@ class User
         $userName = null;
         $userLastname = null;
         $userBirthday = null;
-        if (isset($_GET['name']) && !empty($_GET['name'])) {
-            $userName = $_GET['name'];
+        if (isset($_POST['name']) && !empty($_POST['name'])) {
+            $userName = $_POST['name'];
             $sql = 'UPDATE users set user_name=:user_name where id_user=:id_user';
             $handler = $storage->get()->prepare($sql);
-            $handler->execute(['id_user' => $_GET['id'], 'user_name' => $userName]);
+            $handler->execute(['id_user' => $_POST['id_user'], 'user_name' => $userName]);
         }
-        if (isset($_GET['lastname']) && !empty($_GET['lastname'])) {
-            $userLastname = $_GET['lastname'];
+        if (isset($_POST['lastname']) && !empty($_POST['lastname'])) {
+            $userLastname = $_POST['lastname'];
             $sql = 'UPDATE users set user_lastname=:user_lastname where id_user=:id_user';
             $handler = $storage->get()->prepare($sql);
-            $handler->execute(['id_user' => $_GET['id'], 'user_lastname' => $userLastname]);
+            $handler->execute(['id_user' => $_POST['id_user'], 'user_lastname' => $userLastname]);
         }
-        if (isset($_GET['birthday']) && !empty($_GET['birthday'])) {
-            $userBirthday = $_GET['birthday'];
+        if (isset($_POST['birthday']) && !empty($_POST['birthday'])) {
+            $userBirthday = $_POST['birthday'];
             $sql = 'UPDATE users set user_birthday_timestamp=:user_birthday_timestamp where id_user=:id_user';
             $handler = $storage->get()->prepare($sql);
-            $handler->execute(['id_user' => $_GET['id'], 'user_birthday_timestamp' => (int) $userBirthday]);
+            $dateTime = DateTime::createFromFormat('d-m-Y', $userBirthday);
+            $timestamp = $dateTime->getTimestamp();
+            $handler->execute(['id_user' => $_POST['id_user'], 'user_birthday_timestamp' => $timestamp]);
         }
-        $this->setUserId($_GET['id']);
+        $this->setUserId($_POST['id_user']);
     }
 
     public function deleteUser(): void
@@ -244,5 +236,47 @@ class User
         $this->setUserId($_GET['id']);
     }
 
+    public static function getUserById(int $id): ?User
+    {
+        $storage = new Storage();
+        $sql = "SELECT * FROM users WHERE id_user = :id";
+        $handler = $storage->get()->prepare($sql);
+        $handler->execute(["id" => $id]);
+        $result = $handler->fetchAll();
+        return new User($result[0]['user_name'], $result[0]['user_lastname'], $result[0]['user_birthday_timestamp'], $result[0]['id_user']);
+    }
+
+
+    public static function setLogTokenInBD($login, $logToken) {
+        $someUser = new User();
+        $users = $someUser->getAllUsersFromStorage();
+
+        foreach ($users as $user) {
+            if ($user->getLogin() == $login) {
+                $userId = $user->getUserId();
+                $storage = new Storage();
+
+                $sql = 'UPDATE users set logtoken=:logtoken WHERE id_user=:userID';
+                $handler = $storage->get()->prepare($sql);
+                $handler->execute(["userID" => $userId, "logtoken" => $logToken]);
+
+            }
+        }
+    }
+
+    public static function getUserByLogToken($logToken): User {
+        $storage = new Storage();
+        $sql = "SELECT * FROM users WHERE logtoken=:logtoken";
+        $handler = $storage->get()->prepare($sql);
+        $handler->execute(["logtoken"=> $logToken]);
+        $result = $handler->fetchAll();
+        return new User(
+            $result[0]["user_name"], 
+            $result[0]['user_lastname'], 
+            $result[0]['user_birthday_timestamp'],
+        $result[0]['id_user'],
+        $result[0]['login'],
+        $result[0]['logtoken']);
+    }
 
 }

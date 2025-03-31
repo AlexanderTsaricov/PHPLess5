@@ -61,20 +61,26 @@ class __TwigTemplate_2020567db358feb3078ae6ad4bf1e7a9 extends Template
         // line 10
         yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatDate("now", "H:i:s"), "html", null, true);
         yield "</p>
-            <div class=\"contant\">
+            <div id=\"header\">
                 ";
         // line 12
-        yield from $this->loadTemplate("sidebar.tpl", "main.tpl", 12)->unwrap()->yield($context);
+        yield from $this->loadTemplate("auth-template.tpl", "main.tpl", 12)->unwrap()->yield($context);
         // line 13
+        yield "            </div>
+            <div class=\"contant\">
+                ";
+        // line 15
+        yield from $this->loadTemplate("sidebar.tpl", "main.tpl", 15)->unwrap()->yield($context);
+        // line 16
         yield "                ";
-        yield from $this->loadTemplate(($context["content_template_name"] ?? null), "main.tpl", 13)->unwrap()->yield($context);
-        // line 14
+        yield from $this->loadTemplate(($context["content_template_name"] ?? null), "main.tpl", 16)->unwrap()->yield($context);
+        // line 17
         yield "            </div>
         </main>
         ";
-        // line 16
-        yield from $this->loadTemplate("footer.tpl", "main.tpl", 16)->unwrap()->yield($context);
-        // line 17
+        // line 19
+        yield from $this->loadTemplate("footer.tpl", "main.tpl", 19)->unwrap()->yield($context);
+        // line 20
         yield "        <script src=\"/src/Domain/Views/JS/timescript.js\"></script>
     </body>
 </html>";
@@ -102,7 +108,7 @@ class __TwigTemplate_2020567db358feb3078ae6ad4bf1e7a9 extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  78 => 17,  76 => 16,  72 => 14,  69 => 13,  67 => 12,  62 => 10,  59 => 9,  57 => 8,  52 => 6,  47 => 4,  42 => 1,);
+        return array (  84 => 20,  82 => 19,  78 => 17,  75 => 16,  73 => 15,  69 => 13,  67 => 12,  62 => 10,  59 => 9,  57 => 8,  52 => 6,  47 => 4,  42 => 1,);
     }
 
     public function getSourceContext(): Source
