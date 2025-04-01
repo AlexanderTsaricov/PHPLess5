@@ -140,10 +140,14 @@ class UserController extends AbstractController
 
     public function actionHash(): string
     {
-        return Auth::getPasswordHash($_GET['pass_string']);
+        if(isset($_GET['pass_string']) && !empty($_GET['pass_string'])) {
+            return Auth::getPasswordHash($_GET['pass_string']);
+        } else {
+            throw new \Exception('Невозможно сгенерировать хэш. Не передан пароль');
+        }        
     }
 
-    public function actionEnter(): string {
+    public function actionEnter(): string  {
         if (isset($_COOKIE['mysite'])) {
             $browserLogToken = $_COOKIE['mysite'];
             $user = User::getUserByLogToken($browserLogToken);
@@ -154,10 +158,10 @@ class UserController extends AbstractController
                 header('Location: /');
                 return "";
             } else {
-                $this->actionAuth();
+                 return $this->actionAuth();
             }
         } else {
-            $this->actionAuth();
+             return $this->actionAuth();
         }
     }
 
@@ -194,9 +198,11 @@ class UserController extends AbstractController
                 ]
             );
         } else {
-            if ($_POST['saveMy']) {
-                $this->saveMy($_POST['login']);
-            }
+            if (isset($_POST['saveMy'])) {
+                if ($_POST['saveMy']) {
+                    $this->saveMy($_POST['login']);
+                }
+            }            
             header('Location: /');
             return "";
         }

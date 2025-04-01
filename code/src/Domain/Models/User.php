@@ -49,7 +49,7 @@ class User
         return $this->userLastname;
     }
 
-    public function getUserBirthday(): int
+    public function getUserBirthday(): ?int
     {
         return $this->userBirthday;
     }

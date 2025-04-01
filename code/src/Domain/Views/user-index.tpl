@@ -6,7 +6,18 @@
     <ul class="ul" id="navigation">
         {% for user in users %}
             <li class=ul_li>
-                <p>{{ user.getUserName() }} {{ user.getUserLastname() }}. День рождения {{ user.getUserBirthday() | date('d.m.Y') }}</p>
+                <p>
+                    {{ user.getUserName() }} 
+                    {{ user.getUserLastname() }}. 
+                    День рождения: 
+                    {% if user.getUserBirthday() is empty %}
+                        <b>не установлен</b>
+                    {% else %}
+                        {{ user.getUserBirthday() | date('d.m.Y') }}
+                    {% endif %}
+                </p>
+                
+                
                 <a href="/user/updatingUser/?id={{ user.getUserId() }}">Обновить данные</a>
                 <a href="/user/delete/?id={{ user.getUserId() }}">Удалить пользователя</a>
             </li>

@@ -5,7 +5,6 @@
     </head>
     <link rel="stylesheet" type="text/css" href={{ CSSHref ~ "/main/style.css" }}>
     <body>
-        {{ xdebug | raw }}
         {% include "header.tpl" %}
         <main class="main">
             <p class=time>{{"now"|date("H:i:s")}}</p>

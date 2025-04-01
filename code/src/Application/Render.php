@@ -38,13 +38,6 @@ class Render
             $templateVariables['user_name'] = $username;
 
         }
-        # TODO: Временно, чисто для проверки xdebug
-        ob_start();
-        xdebug_info(); 
-        $xdebug = ob_get_clean();
-        
-        $templateVariables['xdebug'] = $xdebug;
-        # -------
         return $template->render($templateVariables);
     }
 

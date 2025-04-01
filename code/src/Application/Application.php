@@ -68,7 +68,7 @@ class Application
                 $controlllerInstance = new $this->controllerName();
 
                 if ($controlllerInstance instanceof AbstractController) {
-                    if (!$this->checkAccesToMethod($controlllerInstance, $this->methodName)) {
+                    if ($this->checkAccesToMethod($controlllerInstance, $this->methodName)) {
                         return call_user_func_array(
                             [$controlllerInstance, $this->methodName],
                             []
@@ -110,11 +110,13 @@ class Application
 
         if (!empty($rules)) {
             foreach ($rules as $rolePermission) {
-                if (!in_array($rolePermission, $userRoles)) {
+                if (in_array($rolePermission, $userRoles)) {
                     $isAllowed = true;
                     break;
                 }
             }
+        } else {
+            $isAllowed = true;
         }
 
         return $isAllowed;
