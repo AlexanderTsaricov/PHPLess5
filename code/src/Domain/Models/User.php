@@ -243,7 +243,16 @@ class User
         $handler = $storage->get()->prepare($sql);
         $handler->execute(["id" => $id]);
         $result = $handler->fetchAll();
-        return new User($result[0]['user_name'], $result[0]['user_lastname'], $result[0]['user_birthday_timestamp'], $result[0]['id_user']);
+        if (count($result) > 0) {
+            return new User(
+                $result[0]['user_name'], 
+                $result[0]['user_lastname'], 
+                $result[0]['user_birthday_timestamp'], 
+                $result[0]['id_user']
+            );
+        } else {
+            throw new \Exception('Пользователя с id ' . $id . ' не существует');
+        }
     }
 
 

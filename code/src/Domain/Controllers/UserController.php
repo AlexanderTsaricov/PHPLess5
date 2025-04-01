@@ -67,7 +67,12 @@ class UserController extends AbstractController
     public function actionUpdatingUser(): string
     {
         $render = new Render();
-        $userId = $_GET['id'];
+        if (isset($_GET["id"]) && !empty($_GET["id"])) {
+            $userId = $_GET['id'];
+        } else{
+            throw new \Exception('Не указан id');
+        }
+        
         $user = User::getUserById(intval($userId));
         $formatedBirthday = date('d-m-Y', $user->getUserBirthday());
 
