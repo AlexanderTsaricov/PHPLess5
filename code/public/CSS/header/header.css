@@ -1,8 +1,30 @@
 .header {
+  background: linear-gradient(135deg, #ff8c00, #ff4500);
+  padding: 20px;
+  text-align: center;
+  color: white;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   display: flex;
-  border: 1px solid #ccc;
-  justify-content: space-between;
 }
-.header_box {
-  margin: 10px;
+.header .header_box {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 15px;
+  border-radius: 10px;
+  margin: 10px auto;
+  display: inline-block;
+}
+.header .header_box p {
+  font-size: 18px;
+  font-weight: bold;
+}
+.header a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  margin: 0 15px;
+  transition: color 0.3s ease;
+}
+.header a:hover {
+  color: #ffd700;
 }/*# sourceMappingURL=header.css.map */

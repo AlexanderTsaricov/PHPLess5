@@ -5,7 +5,9 @@
         <a href="/user/index/">Пользователи</a>
         <a href="/user/edit/">Создать пользователя</a>        
     </div>
-    <div class="header_box"><p>Это тоже  шапка сайта</p></div>
+    <div class="header_box">
+        {% include "auth-template.tpl" %}
+    </div>
 </header>
 
 <link rel="stylesheet" type="text/css" href={{ CSSHref ~ "/header/header.css" }}>

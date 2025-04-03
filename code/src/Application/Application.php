@@ -69,12 +69,14 @@ class Application
 
                 if ($controlllerInstance instanceof AbstractController) {
                     if ($this->checkAccesToMethod($controlllerInstance, $this->methodName)) {
+                        $userRoles = $controlllerInstance->getUserRoles();
+                        $role = in_array('admin', $userRoles) ? 'admin' : 'guest';
                         return call_user_func_array(
                             [$controlllerInstance, $this->methodName],
-                            []
+                            [$role]
                         );
                     } else {
-                        return 'Нет доступа к методу';
+                        return 'Нет доступа к методу' . " " . $methodName . " в " . $controllerName;
                     }
                 } else {
                     return call_user_func_array([$controlllerInstance, $this->methodName], []);
@@ -107,7 +109,6 @@ class Application
 
         $rules = $controlllerInstance->getActionPermissions($methodName);
         $isAllowed = false;
-
         if (!empty($rules)) {
             foreach ($rules as $rolePermission) {
                 if (in_array($rolePermission, $userRoles)) {

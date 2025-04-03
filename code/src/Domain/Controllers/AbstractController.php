@@ -30,7 +30,8 @@ abstract class AbstractController
 
     public function getActionPermissions(string $methodName): array
     {
-        return isset($this->actionsPermissions[$methodName]) ? $this->actionsPermissions[$methodName] : [];
+        $result = isset($this->actionsPermissions[$methodName]) ? $this->actionsPermissions[$methodName] : [];
+        return $result;
     }
 
 

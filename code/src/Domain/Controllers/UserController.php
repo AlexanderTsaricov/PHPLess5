@@ -18,9 +18,13 @@ class UserController extends AbstractController
         'actionSave' => ['admin']
     ];
 
-    public function actionIndex()
+    public function actionIndex($role = "guest")
     {
         $users = User::getAllUsersFromStorage();
+        $adminBool = false;
+        if ($role == 'admin') {
+            $adminBool = true;
+        }
         $render = new Render();
         if (count($users) == 0) {
             return $render->renderPage(
@@ -36,7 +40,8 @@ class UserController extends AbstractController
                 'user-index.tpl',
                 [
                     'title' => 'Список пользователей в хранилище',
-                    'users' => $users
+                    'users' => $users,
+                    'admin' => $adminBool
                 ],
                 "/user-index/user-index.css"
             );
@@ -219,5 +224,25 @@ class UserController extends AbstractController
         setcookie('mysite', '', time() - 3600, '/');
         header('Location: /');
         return '';
+    }
+
+    public function actionIndexRefresh() {
+        $limit = null;
+
+        if (isset($_POST['maxId']) && ((int)$_POST['maxId'] > 0)) {
+            $limit = $_POST['maxId'];
+        }
+
+        $users = User::getAllUsersFromStorage($limit);
+        $usersData = [];
+
+        if (count($users) > 0) {
+            foreach ($users as $user) {
+                $usersData[] = $user->getUserDataAsArray();
+            }
+        }
+
+        return json_encode($usersData);
+        
     }
 }

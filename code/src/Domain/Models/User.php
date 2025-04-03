@@ -83,9 +83,14 @@ class User
         $this->userBirthday = strtotime($birthdayString);
     }
 
-    public static function getAllUsersFromStorage(): array|false
+    public static function getAllUsersFromStorage(?int $limit = null): array|false
     {
         $sql = "SELECT * FROM users";
+
+        if (isset($limit) && $limit > 0) {
+            $sql .= " WHERE id_user > " . (int)$limit;
+        }
+
         $handler = Application::$storage->get()->prepare($sql);
         $handler->execute();
 
@@ -286,6 +291,21 @@ class User
         $result[0]['id_user'],
         $result[0]['login'],
         $result[0]['logtoken']);
+    }
+
+    /**
+     * Summary of getUserDataAsArray
+     * Returns users like are array
+     * @return array{id: int|null, userbirthday: string, userlastname: string|null, username: string|null}
+     */
+    public function getUserDataAsArray(): array {
+        $userArray = [
+            'id' => $this->userId,
+            'username' => $this->userName,
+            'userlastname' => $this->userLastname,
+            'userbirthday' => date('d-m-Y', $this->userBirthday)
+        ];
+        return $userArray;
     }
 
 }
