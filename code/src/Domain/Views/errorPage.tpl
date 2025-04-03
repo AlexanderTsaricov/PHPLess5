@@ -3,7 +3,7 @@
     <head>
         <title>Error 404</title>
     </head>
-    <link rel="stylesheet" type="text/css" href="/src/Views/CSS/main/style.css">
+    <link rel="stylesheet" type="text/css" href="/CSS/main/style.css">
     <body>
         {% include "header.tpl" %}
         <main class="main">

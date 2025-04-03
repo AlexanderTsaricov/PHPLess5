@@ -8,21 +8,21 @@ use Twig\Loader\FilesystemLoader;
 
 class Render
 {
-    private string $viewFolder = '/src/Domain/Views';
+    private string $viewFolder = 'src/Domain/Views';
     private FilesystemLoader $loader;
     private Environment $environment;
 
     public function __construct()
     {
-        $this->loader = new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . $this->viewFolder);
+        $this->loader = new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . "/../" .  $this->viewFolder);
         $this->environment = new Environment($this->loader, [
-            'cache' => $_SERVER['DOCUMENT_ROOT'] . '/cache/'
+            'cache' => $_SERVER['DOCUMENT_ROOT'] . '/../cache/'
         ]);
     }
 
     public function renderPage(string $contentTemplateName = 'page-index.tpl', array $templateVariables = [])
     {
-        $CSSFolder = $this->viewFolder . '/CSS';
+        $CSSFolder = '/CSS';
         $template = $this->environment->load('main.tpl');
         $templateVariables['content_template_name'] = $contentTemplateName;
         $templateVariables['CSSHref'] = $CSSFolder;

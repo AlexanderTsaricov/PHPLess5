@@ -1,0 +1,8 @@
+.header {
+    display: flex;
+    border: 1px solid #ccc;
+    justify-content: space-between;
+    &_box {
+        margin: 10px;
+    }
+}

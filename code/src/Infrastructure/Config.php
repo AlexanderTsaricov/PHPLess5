@@ -10,7 +10,7 @@ class Config
 
     public function __construct()
     {
-        $adress = $_SERVER['DOCUMENT_ROOT'] . $this->defaultConfigFile;
+        $adress = $_SERVER['DOCUMENT_ROOT'] . "/.." . $this->defaultConfigFile;
 
         if (file_exists($adress) && is_readable($adress)) {
             $this->applicationConfiguration = parse_ini_file($adress, true);
