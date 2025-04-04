@@ -6,35 +6,76 @@ setInterval(function() {
         url: '/user/indexRefresh/',
         data: {maxId: maxId}
     }).done(function(response) {
-        // data - json response
-        // k => [username, userlastname, userbirthday]
-        /*
-            TODO: Переделать скрипт, чтобы обновлялось удаление и обновление пользователей
-        */
+        console.log(response);
+        updateUsersTable(response);
+    });
+}, 10000);
 
-        let users = $.parseJSON(response);
 
-        if (users.length != 0) {
-            for (var k in users) {
-                let row = "<tr>";
+function updateUsersTable(response) {
+    let table = getTable();
+    const users = $.parseJSON(response);
+    // Check update and missing items in the table
+    users.forEach(user => {
+        if (!table.hasOwnProperty(user.id)) {
+            console.log(typeof(user.id));
+            let row = `<tr class="table_row" id="${user.id}">`;
 
-                row += "<td>" + users[k].id + "</td>";
-                maxId = users[k].id;
-                row += "<td>" + users[k].username + "</td>";
-                row += "<td>" + users[k].userlastname + "</td>";
-                row += "<td>" + users[k].userbirthday + "</td>";
-                if (isAdmin) {
-                    row += "<td>" + `
-                    <a href="/user/updatingUser/?id=${users[k].id}">Обновить данные</a>
-                    <a href="/user/delete/?id=${users[k].id}">Удалить пользователя</a>
-                    ` + "</td>";
-                }
-                
+            row += `<td class="table_userId">${user.id}</td>`;
+            maxId = user.id;
+            row += `<td class="table_username">${user.username}</td>`;
+            row += `<td class="table_userlastname">${user.userlastname}</td>`;
+            row += `<td class="table_userBirthday">${user.userbirthday}</td>`;
 
-                row += "</tr>";
+            if (isAdmin) {
+                row += `<td class="table_userUpdate">
+                    <a href="/user/updatingUser/?id=${user.id}">Обновить данные</a>
+                    <a href="/user/delete/?id=${user.id}">Удалить пользователя</a>
+                </td>`;
+            }
 
-                $('.content-template tbody').append(row);
+            row += "</tr>";
+
+            $('.content-template tbody').append(row);
+        } else {
+            if (table[user.id].username.textContent != user.username) {
+                table[user.id].username.textContent = user.username;
+            }
+            if (table[user.id].userlastname.textContent != user.userlastname) {
+                table[user.id].userlastname.textContent = user.userlastname;
+            }
+            if (table[user.id].userbirthday.textContent != user.userbirthday) {
+                if (user.userbirthday == null) {
+                    table[user.id].userbirthday.innerHTML = "<b>Не установлен</b>";
+                } else {
+                    table[user.id].userbirthday.textContent = user.userbirthday;
+                }                
             }
         }
     });
-}, 10000);
+    // Check deleted users
+    table = getTable();
+    const usersId = [];
+    users.forEach(user => {
+        usersId.push(user.id);
+    });
+    Object.keys(table).forEach(key => {
+        if (!usersId.includes(parseInt(key))) {
+            document.querySelector(`#${key}`).remove();
+        }
+    });
+}
+
+function getTable() {
+    const result = {};
+    const rows = document.querySelectorAll(".table_row");
+    rows.forEach(row => {
+        result[parseInt(row.id)] = {
+            username: row.querySelector(".table_username"),
+            userlastname: row.querySelector(".table_userlastname"),
+            userbirthday: row.querySelector(".table_userBirthday")
+        };
+    });
+
+    return result;
+}

@@ -51,6 +51,9 @@ class User
 
     public function getUserBirthday(): ?int
     {
+        if ($this->userBirthday === null) {
+            return null;
+        }
         return $this->userBirthday;
     }
 
@@ -159,32 +162,33 @@ class User
 
     public static function validateUpdateData(): bool
     {
-        if (isset($_POST['id_user']) && !empty($_POST['id_user'])) {
-
-            $users = User::getAllUsersFromStorage();
-            foreach ($users as $user) {
-                if ($user->getUserId() == (int) $_POST['id_user']) {
-                    $result = true;
-                    if (!preg_match('/^(\d{2}-\d{2}-\d{4})$/', $_POST['birthday'])) {
-                        $result = false;
-                    }
-
-                    if (!preg_match('/^[A-Za-zА-Яа-яЁё]+$/u', $_POST['name'])) {
-                        $result = false;
-                    }
-                    if (!preg_match('/^[A-Za-zА-Яа-яЁё]+$/u', $_POST['lastname'])) {
-                        $result = false;
-                    }
-
-                    return $result;
-                } else {
-                    return false;
-                }
-            }
-        } else {
+        if (!isset($_POST['id_user']) || empty($_POST['id_user'])) {
             return false;
         }
 
+        $userId = (int) $_POST['id_user'];
+        $users = User::getAllUsersFromStorage();
+
+        foreach ($users as $user) {
+            if ($user->getUserId() === $userId) {
+
+                if (!preg_match('/^\d{2}-\d{2}-\d{4}$/', $_POST['birthday'])) {
+                    return false;
+                }
+
+                if (!preg_match('/^[A-Za-zА-Яа-яЁё]+$/u', $_POST['name'])) {
+                    return false;
+                }
+
+                if (!preg_match('/^[A-Za-zА-Яа-яЁё]+$/u', $_POST['lastname'])) {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static function validateDeleteData(): bool
@@ -303,7 +307,7 @@ class User
             'id' => $this->userId,
             'username' => $this->userName,
             'userlastname' => $this->userLastname,
-            'userbirthday' => date('d-m-Y', $this->userBirthday)
+            'userbirthday' => $this->userBirthday ? date('d-m-Y', $this->userBirthday) : null
         ];
         return $userArray;
     }

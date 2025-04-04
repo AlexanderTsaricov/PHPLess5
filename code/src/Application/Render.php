@@ -44,7 +44,7 @@ class Render
 
     public function renderExeptionPage(Exception $e, string $exeptionPage = 'exeptionPage.tpl')
     {
-        $CSSFolder = $this->viewFolder . '/CSS';
+        $CSSFolder = '/CSS';
         $template = $this->environment->load('main.tpl');
         $templateVariables['content_template_name'] = $exeptionPage;
         $templateVariables['message'] = $e->getMessage();

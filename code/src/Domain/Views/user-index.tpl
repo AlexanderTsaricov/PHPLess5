@@ -19,19 +19,19 @@
             </thead>
             <tbody>
                 {% for user in users %}
-                    <tr>
-                        <td>{{ user.getUserId() }}</td>
-                        <td>{{ user.getUserName() }}</td>
-                        <td>{{ user.getUserLastname() }}</td>
-                        <td>
+                    <tr class="table_row" id={{ user.getUserId() }}>
+                        <td class="table_userId">{{ user.getUserId() }}</td>
+                        <td class="table_username">{{ user.getUserName() }}</td>
+                        <td class="table_userlastname">{{ user.getUserLastname() }}</td>
+                        <td class="table_userBirthday">
                             {% if user.getUserBirthday() is empty %}
-                                <b>не установлен</b>
+                                <b>Не установлен</b>
                             {% else %}
                                 {{ user.getUserBirthday() | date('d.m.Y') }}
                             {% endif %}
                         </td>
                         {% if admin %}
-                            <td>
+                            <td class="table_userUpdate">
                                 <a href="/user/updatingUser/?id={{ user.getUserId() }}">Обновить данные</a>
                                 <a href="/user/delete/?id={{ user.getUserId() }}">Удалить пользователя</a>
                             </td>

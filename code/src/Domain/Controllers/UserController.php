@@ -98,7 +98,6 @@ class UserController extends AbstractController
         $user = new User();
         $render = new Render();
         if (User::validateUpdateData()) {
-
             $user->updateUser();
             return $render->renderPage(
                 "user-created.tpl",
@@ -108,7 +107,7 @@ class UserController extends AbstractController
                 ]
             );
         } else {
-            throw new \Exception("Переданные данные некорректны или не найден пользователь с такми ID");
+            throw new \Exception("Переданные данные некорректны или не найден пользователь с такми ID ");
         }
     }
 
@@ -227,13 +226,8 @@ class UserController extends AbstractController
     }
 
     public function actionIndexRefresh() {
-        $limit = null;
 
-        if (isset($_POST['maxId']) && ((int)$_POST['maxId'] > 0)) {
-            $limit = $_POST['maxId'];
-        }
-
-        $users = User::getAllUsersFromStorage($limit);
+        $users = User::getAllUsersFromStorage();
         $usersData = [];
 
         if (count($users) > 0) {
@@ -243,6 +237,5 @@ class UserController extends AbstractController
         }
 
         return json_encode($usersData);
-        
     }
 }
