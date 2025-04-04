@@ -42,6 +42,8 @@
         </table>
     </div>
 </section>
-
+<script>
+    var admin = {{ admin ? 'true' : 'false' }};
+</script>
 <script src="/JS/timeRequest.js"></script>
 <link rel="stylesheet" type="text/css" href={{ CSSHref ~ "/user-index/user-index.css" }}>

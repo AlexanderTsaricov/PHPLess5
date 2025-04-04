@@ -1,4 +1,5 @@
 let maxId = $('.table-responsive table tbody tr:last-child td:first-child').html() || 0;
+let isAdmin = admin === "true";
 setInterval(function() {
     $.ajax({
         method: "POST",
@@ -7,6 +8,9 @@ setInterval(function() {
     }).done(function(response) {
         // data - json response
         // k => [username, userlastname, userbirthday]
+        /*
+            TODO: Переделать скрипт, чтобы обновлялось удаление и обновление пользователей
+        */
 
         let users = $.parseJSON(response);
 
@@ -19,10 +23,13 @@ setInterval(function() {
                 row += "<td>" + users[k].username + "</td>";
                 row += "<td>" + users[k].userlastname + "</td>";
                 row += "<td>" + users[k].userbirthday + "</td>";
-                row += "<td>" + `
-                <a href="/user/updatingUser/?id=${users[k].id}">Обновить данные</a>
-                <a href="/user/delete/?id=${users[k].id}">Удалить пользователя</a>
-                ` + "</td>";
+                if (isAdmin) {
+                    row += "<td>" + `
+                    <a href="/user/updatingUser/?id=${users[k].id}">Обновить данные</a>
+                    <a href="/user/delete/?id=${users[k].id}">Удалить пользователя</a>
+                    ` + "</td>";
+                }
+                
 
                 row += "</tr>";
 
